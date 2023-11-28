@@ -21,12 +21,20 @@
             <div class="row"> 
                 <div class="col-lg-12 blog-post-single">
                   
-					
+					{% if user_type == 'teacher' %}
 					<div class="blog-author">
 						<div class="author-bio">
 							<h2 class="author_name">{{user.first_name}} {{user.last_name}}</h2>
 						</div>
 					</div>
+					{%else%}
+					<div class="blog-author">
+						<div class="author-bio">
+							<h2 class="author_name">{{user.first_name}} </h2>
+						</div>
+					</div>
+
+					{% endif %}
 
                 </div><!-- end col -->
 				
@@ -60,20 +68,54 @@
                                         
 								<li>
 									{% if user_type == 'teacher' and user.username == course.teacher.username%}
-										<a href="{% url 'dashboard' course.teacher.username%}"><i class="fa fa-book" aria-hidden="true"></i>{{course.teacher.username}} </a> 
+										<a href="{% url 'dashboard' course.teacher.username%}"><i class="fa fa-book" aria-hidden="true"></i> {{course.teacher.username}} </a> 
 									{% else %}
-										<a href="{% url 'teacher_detail' course.teacher.pk %}"><i class="fa fa-book" aria-hidden="true"></i>{{course.teacher.username}}</a>
+										<a href="{% url 'teacher_detail' course.teacher.pk %}"><i class="fa fa-book" aria-hidden="true"></i> {{course.teacher.username}}</a>
 									{% endif %}
 								</li>
+								
 							</ul>
+							{% if user_type == 'teacher' and user.username == course.teacher.username%}
+									<div class="d-flex justify-content-around mt-3">
+										<a class="btn btn-info" href="{% url 'edit_course' course.category.slug course.id%}">Edit Course</a>
+										<button class="btn btn-danger" data-toggle="modal" data-target="#deleteCourseModal{{ course.id }}" >Delete Course</button>
+									</div>		
+									
+							{% endif %}
+							
 						</div>
 					</div>
                 </div><!-- end col -->
+				<!-- DELETE COURSE MODAL -->
+				<div class="modal fade" id="deleteCourseModal{{ course.id }}" tabindex="-1" role="dialog" aria-labelledby="deleteCourseModalLabel" aria-hidden="true">
+					<div class="modal-dialog modal-dialog-centered">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h2 class="modal-title" id="deleteCourseModalLabel"> Delete the Course</h2>
+								<button type="button" class="close" data-dismiss="modal">
+									<span>&times;</span>
+								</button>
+							</div>
+							<div class="modal-body">
+								<p>You will Delete the course below: </p>
+								<h1>{{course.name}}</h1>
+							</div>
+							<div class="modal-footer">
+
+								<a class="btn btn-danger" href="{% url 'delete_course' course.category.slug course.id %}">I Am Sure</a>
+		
+								<button type="button" class="btn btn-secondary" data-dismiss="modal">CANCEL</button>
+							</div>
+						</div>
+					</div>
+				</div>
                 {% endfor %}
             </div><!-- end row -->		
 
         </div><!-- end container -->
     </div><!-- end section -->
 
+	
+		
     
 {% endblock %}

@@ -97,7 +97,7 @@ def user_dashboard(request,username):
     
     context = {
         "courses":courses,
-        "user": current_user
+        "user": current_user,
     }
     
     return render(request, 'dashboard.html',context)

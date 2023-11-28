@@ -49,9 +49,9 @@
                                         
                                         <li>
 											{% if user_type == 'teacher' and user.username == course.teacher.username%}
-												<a href="{% url 'dashboard' course.teacher.username%}"><i class="fa fa-book" aria-hidden="true"></i>{{course.teacher.username}} </a> 
+												<a href="{% url 'dashboard' course.teacher.username%}"><i class="fa fa-book" aria-hidden="true"></i> {{course.teacher.username}} </a> 
 											{% else %}
-												<a href="{% url 'teacher_detail' course.teacher.pk %}"><i class="fa fa-book" aria-hidden="true"></i>{{course.teacher.username}}</a>
+												<a href="{% url 'teacher_detail' course.teacher.pk %}"><i class="fa fa-book" aria-hidden="true"></i> {{course.teacher.username}}</a>
 											{% endif %}
 										</li>
                                     </ul>

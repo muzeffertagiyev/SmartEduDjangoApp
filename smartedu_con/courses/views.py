@@ -1,5 +1,6 @@
 from django.shortcuts import render,get_object_or_404,redirect
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 
 from . models import Course, Category, Tag
 from . forms import AddCourseForm
@@ -97,8 +98,6 @@ def search(request):
     return render(request, 'courses.html', context)
 
 
-
-
 def add_course(request):
     current_user = request.user
     is_add_course_page = True
@@ -145,6 +144,77 @@ def add_course(request):
     else:
         # Redirect to the login page if the user is not authenticated
         return redirect('login')  
+    
+@login_required(login_url='login')
+def edit_course(request,category_slug,course_id):
+    current_user = request.user
+    course = Course.objects.get(id=course_id,category__slug=category_slug)
+
+    if hasattr(current_user, 'teacher'): 
+        teacher = Teacher.objects.get(user=current_user)
+        if course.teacher.username == current_user.username:
+            if request.method == 'POST':
+                # instance will add all data of the course into forms.
+                form = AddCourseForm(request.POST, instance=course)
+                form.fields['teacher'].initial = teacher
+                if form.is_valid():
+                    
+                    course = form.save(commit=False)
+
+                    if 'image' in request.FILES:
+                        course.image = request.FILES['image']
+
+                    course.teacher = teacher
+                    course.save()
+
+                    # For saving many to many relationships data
+                    form.save_m2m()
+                    form.save()
+
+                    messages.success(request, f"Course '{course.name}' was edited successfully")
+                    return redirect('dashboard', username=current_user.username)
+                
+                # if the error happens in the submission
+                else:
+                    default_data = {'teacher': teacher}
+                    messages.error(request, 'There was an error with the form submission')
+
+            # if not submitted
+            else:
+                default_data = {'teacher': teacher}
+                form = AddCourseForm(instance=course,initial=default_data)
+
+            return render(request, 'add_course.html', {'form': form})
+        else:
+            messages.info(request,f"You can only edit your courses")
+            return redirect('dashboard', username=current_user.username)
+    
+    else:
+        messages.info(request,f"You cannot edit a course")
+        return redirect('dashboard', username=current_user.username)
+    
+@login_required(login_url='login')
+def delete_course(request,category_slug, course_id):
+    current_user = request.user
+    
+    if hasattr(current_user, 'teacher'):
+        course = Course.objects.get(id=course_id,category__slug=category_slug)
+        if course.teacher.username == current_user.username:
+            messages.info(request,f"Course '{course.name}' was deleted successfully")
+            course.delete()
+            return redirect('dashboard', username=current_user.username)
+        else:
+            messages.info(request,f"You can only delete your courses")
+            return redirect('dashboard', username=current_user.username)
+    else:
+        messages.info(request,f"You cannot delete a course")
+        return redirect('dashboard', username=current_user.username)
+    
+    
+        
+
+
+    
 
 
 
