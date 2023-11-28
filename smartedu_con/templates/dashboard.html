@@ -24,13 +24,27 @@
 					{% if user_type == 'teacher' %}
 					<div class="blog-author">
 						<div class="author-bio">
-							<h2 class="author_name">{{user.first_name}} {{user.last_name}}</h2>
+							<h2 class="author_name">{{teacher.first_name}} {{teacher.last_name}}</h2>
+							<br>
+							<h3 class="author_name"><b>Title:</b>  {{teacher.title}}</h3>
+							<h3> <b>Description:</b> {{teacher.description}}</h3>
+							<h3> <b>Facebook:</b> <a target="_blank" href="{{teacher.facebook}}">{{teacher.facebook}}</a></h3>
+							<h3> <b>Twitter:</b> <a target="_blank" href="{{teacher.facebook}}">{{teacher.twitter}}</a></h3>
+							<h3> <b>Linkedin:</b> <a target="_blank" href="{{teacher.facebook}}">{{teacher.linkedin}}</a></h3>
+							<h3> <b>Youtube:</b> <a target="_blank" href="{{teacher.facebook}}">{{teacher.youtube}}</a></h3>
+							<br>
+							<h3> <b>Enrolled Date:</b> {{teacher.account_create_date}}</h3>
+							<br>
+							<div>
+								<a href="{% url 'edit_teacher_detail'%}" class="btn btn-info">Update</a>
+							</div>
 						</div>
 					</div>
+					
 					{%else%}
 					<div class="blog-author">
 						<div class="author-bio">
-							<h2 class="author_name">{{user.first_name}} </h2>
+							<h2 class="author_name">{{user.first_name}} {{user.last_name}}</h2>
 						</div>
 					</div>
 

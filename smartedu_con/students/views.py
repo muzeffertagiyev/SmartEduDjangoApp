@@ -28,4 +28,4 @@ def release_the_course(request):
         messages.info(request,f'You released "{course.name}" course')
         return redirect('dashboard',username=user.username)
     else:
-        messages.info(request,f'You should have a student account for releasing to a course')
+        messages.info(request,f'You should have a student account for releasing  a course')

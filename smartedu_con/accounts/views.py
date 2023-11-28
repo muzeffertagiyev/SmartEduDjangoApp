@@ -42,7 +42,6 @@ def user_register(request):
     if request.method == 'POST':
         form = RegisterForm(request.POST)
         if form.is_valid():
-            
             email = form.cleaned_data['email']
 
             # Check if the email already exists in the database
@@ -88,16 +87,17 @@ def user_logout(request):
 def user_dashboard(request,username):
     current_user = get_object_or_404(User, username=username)
     # joined_courses comes from the courses models 
-
+    teacher = None
     if hasattr(request.user, 'teacher'):
         courses = Course.objects.filter(teacher=current_user.teacher).order_by('-date')
-
+        teacher = Teacher.objects.get(id=current_user.teacher.id)
     else:
         courses = current_user.joined_courses.all()
     
     context = {
         "courses":courses,
         "user": current_user,
+        "teacher":teacher
     }
     
     return render(request, 'dashboard.html',context)

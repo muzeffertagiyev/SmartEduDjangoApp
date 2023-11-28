@@ -107,8 +107,7 @@ def add_course(request):
         
             if request.method == 'POST':
                 form = AddCourseForm(request.POST)
-                form.fields['teacher'].initial = teacher
-                
+
                 if form.is_valid():
                     course_name = form.cleaned_data['name']
                     # Save the form data to the database
@@ -127,20 +126,17 @@ def add_course(request):
 
                     return redirect('courses')
                 else:
-                    default_data = {'teacher': teacher}
                     messages.info(request,'There was an error with the form submission')
                     return redirect('add_course')    
             else:
-                default_data = {'teacher': teacher}
-                form = AddCourseForm(initial=default_data)
+                form = AddCourseForm(initial={'teacher': teacher})
 
             return render(request,'add_course.html',{'form':form,'is_add_course_page': is_add_course_page})
         else:
             # Redirect to the user's dashboard with a message if the user is not teacher
             messages.info(request, 'You do not have permission to add a course.Only Teachers can')
             return redirect('dashboard',username=current_user
-                    .username)  # Adjust the 'dashboard' URL name accordingly
-            
+                    .username)
     else:
         # Redirect to the login page if the user is not authenticated
         return redirect('login')  
@@ -156,9 +152,8 @@ def edit_course(request,category_slug,course_id):
             if request.method == 'POST':
                 # instance will add all data of the course into forms.
                 form = AddCourseForm(request.POST, instance=course)
-                form.fields['teacher'].initial = teacher
                 if form.is_valid():
-                    
+                    # creating not saved course form, because we will check image and add teacher
                     course = form.save(commit=False)
 
                     if 'image' in request.FILES:
@@ -176,19 +171,16 @@ def edit_course(request,category_slug,course_id):
                 
                 # if the error happens in the submission
                 else:
-                    default_data = {'teacher': teacher}
                     messages.error(request, 'There was an error with the form submission')
 
             # if not submitted
             else:
-                default_data = {'teacher': teacher}
-                form = AddCourseForm(instance=course,initial=default_data)
+                form = AddCourseForm(instance=course,initial={'teacher': teacher})
 
             return render(request, 'add_course.html', {'form': form})
         else:
             messages.info(request,f"You can only edit your courses")
             return redirect('dashboard', username=current_user.username)
-    
     else:
         messages.info(request,f"You cannot edit a course")
         return redirect('dashboard', username=current_user.username)

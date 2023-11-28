@@ -1,6 +1,5 @@
 from django import forms
 from . models import Course, Category, Tag
-from teachers.models import Teacher
 
 class AddCourseForm(forms.ModelForm):
     name = forms.CharField(widget=forms.TextInput(attrs={
@@ -26,10 +25,7 @@ class AddCourseForm(forms.ModelForm):
         }),
         required=False
     )
-    teacher = forms.ModelChoiceField(queryset=Teacher.objects.all(), widget=forms.HiddenInput(), required=False)
-
-
 
     class Meta:
         model = Course
-        fields = ['name','category','tags','description','image','teacher']
+        fields = ['name','category','tags','description','image']

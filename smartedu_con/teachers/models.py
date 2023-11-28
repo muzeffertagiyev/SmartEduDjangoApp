@@ -3,9 +3,9 @@ from django.contrib.auth.models import User
 
 
 class Teacher(models.Model):
-    first_name = models.CharField(max_length=50, blank=True)
-    last_name = models.CharField(max_length=50, blank=True)
-    username = models.CharField(max_length=50,blank=True)
+    first_name = models.CharField(max_length=50)
+    last_name = models.CharField(max_length=50)
+    username = models.CharField(max_length=50)
     title = models.CharField(max_length=50,blank=True)
     description = models.TextField(blank=True)
     image = models.ImageField(upload_to='courses/%Y/%m/%d/',default='courses/default_course_image.png')
