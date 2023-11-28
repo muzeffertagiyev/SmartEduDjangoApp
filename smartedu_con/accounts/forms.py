@@ -15,6 +15,11 @@ class LoginForm(forms.Form):
     }))
 
 
+USER_TYPE_CHOICES = (
+        ('student', 'Student'),
+        ('teacher', 'Teacher'),
+    )
+
 class RegisterForm(UserCreationForm):
     first_name = forms.CharField(widget=forms.TextInput(attrs={
         'class':'form-control',
@@ -43,6 +48,12 @@ class RegisterForm(UserCreationForm):
         'placeholder':'Confirm Password'
     }))
 
+
+    user_type = forms.ChoiceField(
+        choices=USER_TYPE_CHOICES,
+        widget=forms.RadioSelect(),
+    )
+
     class Meta:
         model = User
-        fields = ['first_name','last_name','username','email','password1','password2']
+        fields = ['first_name','last_name','username','email','password1','password2','user_type']

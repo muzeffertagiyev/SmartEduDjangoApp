@@ -27,7 +27,14 @@
 							</div>
 						</div>
 						<div class="team-content">
-							<h3 class="title"> <a href="{% url 'teacher_detail' teacher.pk %}">{{teacher.name}}</a></h3>
+							<h3 class="title"> 
+								{% if user_type == 'teacher' and user.username == teacher.username%}
+									
+									<a href="{% url 'dashboard' teacher.username%}">{{teacher.username}} </a> 
+								{% else %}
+									<a href="{% url 'teacher_detail' teacher.pk %}">{{teacher.username}}</a>
+								{% endif %}
+							</h3>
 							<span class="post">{{teacher.title }}</span>
 						</div>
 					</div>

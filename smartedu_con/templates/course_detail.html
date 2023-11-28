@@ -20,14 +20,16 @@
 						<div class="post-content">
 							<div class="post-date">
 								{% if user.is_authenticated %}
-									{% if course in enrolled_courses %}
-									<button type="submit" class="btn btn-outline-danger rounded-0" data-toggle="modal" data-target="#releaseModal">
-										<span>RELEASE</span>
-									</button>
-									{% else %}
-										<button type="submit" class="btn btn-outline-success rounded-0" data-toggle="modal" data-target="#enrollModal">
-											<span>ENROLL</span>
+									{% if user_type == 'student'%}
+										{% if course in enrolled_courses %}
+										<button type="submit" class="btn btn-outline-danger rounded-0" data-toggle="modal" data-target="#releaseModal">
+											<span>RELEASE</span>
 										</button>
+										{% else %}
+											<button type="submit" class="btn btn-outline-success rounded-0" data-toggle="modal" data-target="#enrollModal">
+												<span>ENROLL</span>
+											</button>
+										{% endif %}
 									{% endif %}
 								{% endif %}
 							</div>
@@ -50,7 +52,13 @@
 					
 					<div class="blog-author">
 						<div class="author-bio">
-							<h3 class="author_name"><a href="{% url 'teacher_detail' course.teacher.pk %}">{{course.teacher.name}}</a></h3>
+							<h3 class="author_name">
+								{% if user_type == 'teacher' and user.username == course.teacher.username%}
+									<a href="{% url 'dashboard' course.teacher.username%}">{{course.teacher.username}} </a> 
+								{% else %}
+									<a href="{% url 'teacher_detail' course.teacher.pk %}">{{course.teacher.username}}</a>
+								{% endif %}
+							</h3>
 							<h5>{{course.teacher.title}}</h5>
 							<p class="author_det">
 								{{course.teacher.description}}

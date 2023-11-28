@@ -1,5 +1,5 @@
 from django.urls import path
-from teachers.views import TeachersListView, TeacherDetailView
+from . views import TeachersListView, TeacherDetailView
 
 
 urlpatterns = [

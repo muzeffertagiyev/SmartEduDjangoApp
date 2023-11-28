@@ -12,6 +12,13 @@
         <div class="container">
             <div class="row"> 
                 <div class="col-lg-9 blog-post-single">
+					{% if messages %}
+                            {% for message in messages %}
+                                <div class="alert alert-{{message.tags}}">
+                                    {{message}}
+                                </div>
+                            {% endfor %}
+                    {% endif %}
                     
                     <div class="row"> 
 						{% if courses %}
@@ -24,11 +31,11 @@
                                 <div class="course-br">
                                     <div class="course-title">
                                         <h2><a href="{% url 'course_detail' course.category.slug course.id %}" title="">{{course.name}}</a></h2>	
-										{% with course_id=course.id %}
+										<!-- {% with course_id=course.id %} -->
 											{% if course_id in enrolled_course_ids %}
 												<span class="bg-info p-1" style="color:black" >Enrolled</span>
 											{% endif %}
-										{% endwith %}
+										<!-- {% endwith %} -->
                                     </div>
                                     <div class="course-desc">
                                         <p>{{course.description | truncatechars:100}}</p>
@@ -40,7 +47,13 @@
                                     <ul>
                                         <li><i class="fa fa-calendar" aria-hidden="true"></i> {{course.date|date:"d M Y"}}</li>
                                         
-                                        <li><a href="{% url 'teacher_detail' course.teacher.pk %}"><i class="fa fa-book" aria-hidden="true"></i> {{course.teacher.name}}</a></li>
+                                        <li>
+											{% if user_type == 'teacher' and user.username == course.teacher.username%}
+												<a href="{% url 'dashboard' course.teacher.username%}"><i class="fa fa-book" aria-hidden="true"></i>{{course.teacher.username}} </a> 
+											{% else %}
+												<a href="{% url 'teacher_detail' course.teacher.pk %}"><i class="fa fa-book" aria-hidden="true"></i>{{course.teacher.username}}</a>
+											{% endif %}
+										</li>
                                     </ul>
                                 </div>
                             </div>

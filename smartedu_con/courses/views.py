@@ -1,6 +1,11 @@
-from django.shortcuts import render,get_object_or_404
+from django.shortcuts import render,get_object_or_404,redirect
+from django.contrib import messages
 
 from . models import Course, Category, Tag
+from . forms import AddCourseForm
+
+
+from teachers.models import Teacher
 
 
 
@@ -90,9 +95,70 @@ def search(request):
     }
 
     return render(request, 'courses.html', context)
+
+
+
+
+def add_course(request):
+    current_user = request.user
+    is_add_course_page = True
+    if current_user.is_authenticated:
+        if hasattr(current_user, 'teacher'):
+            teacher = Teacher.objects.get(user=current_user)
+        
+            if request.method == 'POST':
+                form = AddCourseForm(request.POST)
+                form.fields['teacher'].initial = teacher
+                
+                if form.is_valid():
+                    course_name = form.cleaned_data['name']
+                    # Save the form data to the database
+                    course = form.save(commit=False)
+                    if 'image' in request.FILES:
+                        course.image = request.FILES['image']
+                    
+                    # Set the teacher before saving the course
+                    course.teacher = teacher
+                    course.save()
+
+                    # For saving many to many relationships data
+                    form.save_m2m()
+
+                    messages.info(request,f'Course "{course_name}" was added successfully')
+
+                    return redirect('courses')
+                else:
+                    default_data = {'teacher': teacher}
+                    messages.info(request,'There was an error with the form submission')
+                    return redirect('add_course')    
+            else:
+                default_data = {'teacher': teacher}
+                form = AddCourseForm(initial=default_data)
+
+            return render(request,'add_course.html',{'form':form,'is_add_course_page': is_add_course_page})
+        else:
+            # Redirect to the user's dashboard with a message if the user is not teacher
+            messages.info(request, 'You do not have permission to add a course.Only Teachers can')
+            return redirect('dashboard',username=current_user
+                    .username)  # Adjust the 'dashboard' URL name accordingly
+            
+    else:
+        # Redirect to the login page if the user is not authenticated
+        return redirect('login')  
+
+
+
+
+#  for checking the errors in the form.
+# else:
+#     default_data = {'teacher': default_teacher}
+#     messages.error(request,'There was an error with the form submission')
+#     # You can iterate over the form errors and add them to the messages
+#     for field, errors in form.errors.items():
+#         for error in errors:
+#             messages.error(request, f"{field.capitalize()}: {error}")
     
-
-
+#     return redirect('add_course') 
 
 
 # def course_list(request):
